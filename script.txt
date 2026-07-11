@@ -1,0 +1,222 @@
+/* script.js
+   Handles:
+   - Generating subtle floating background hearts & sparkles
+   - Envelope open animation and letter reveal
+   - Celebration particle spawns (kisses, hearts, sparkles) for 5 seconds
+   - Share button (Web Share API with fallback copy)
+*/
+
+/* ---------- Utility helpers ---------- */
+// create an element with class(es) and optional content
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+// random integer in range [min, max]
+function rnd(min, max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+// viewport helpers
+function vw(){ return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0); }
+function vh(){ return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0); }
+
+/* ---------- Background: floating hearts & sparkles on load ---------- */
+function generateBackgroundDecor(countHearts=18, countSparks=24){
+  const bg = document.getElementById('background');
+  // create hearts
+  for(let i=0;i<countHearts;i++){
+    const h = el('div','bg-heart');
+    const size = rnd(18,48);
+    h.style.width = size+'px';
+    h.style.height = size+'px';
+    h.style.left = (Math.random()*100)+'%';
+    h.style.top = (Math.random()*100)+'%';
+    h.style.opacity = (Math.random()*0.45+0.08).toFixed(2);
+    h.style.transform = `translate3d(0,0,0) rotate(${rnd(-20,20)}deg)`;
+    h.style.pointerEvents = 'none';
+    // heart emoji with subtle CSS
+    h.innerHTML = '❤';
+    h.style.fontSize = size+'px';
+    h.style.color = `rgba(${255},${95+rnd(0,30)},${162},${1})`;
+    h.style.transition = `transform ${10 + Math.random()*20}s linear`;
+    // gentle floating animation using transform translateY
+    (function(elm){
+      const dur = 10 + Math.random()*18;
+      const amplitude = 18 + Math.random()*40;
+      let dir = Math.random() > 0.5 ? 1 : -1;
+      function anim(){
+        elm.style.transform = `translate3d(0, ${dir * amplitude}px, 0) rotate(${rnd(-20,20)}deg)`;
+        setTimeout(()=>{ elm.style.transform = `translate3d(0, ${-dir * amplitude}px, 0) rotate(${rnd(-20,20)}deg)`; }, dur*400);
+        setTimeout(anim, dur*1000);
+      }
+      anim();
+    })(h);
+    bg.appendChild(h);
+  }
+
+  // create small sparkles
+  for(let i=0;i<countSparks;i++){
+    const s = el('div','bg-spark');
+    const size = rnd(3,8);
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.left = (Math.random()*100)+'%';
+    s.style.top = (Math.random()*100)+'%';
+    s.style.opacity = (Math.random()*0.6+0.1).toFixed(2);
+    s.classList.add('sparkle');
+    bg.appendChild(s);
+  }
+}
+
+/* ---------- Celebration: spawn particles for 5 seconds ---------- */
+function triggerCelebration(duration=5000){
+  const root = document.body;
+  const start = Date.now();
+  const spawnInterval = 60; // ms between spawns
+  const activeParticles = [];
+
+  // spawn one particle (kiss, heart, or spark)
+  function spawnParticle(){
+    const typePick = Math.random();
+    let p;
+    if (typePick < 0.45) {
+      p = el('div','particle kiss', null);
+      p.textContent = '💋'; // lipstick kiss
+      p.classList.add('kiss');
+      p.style.fontSize = `${rnd(22,44)}px`;
+    } else if (typePick < 0.9){
+      p = el('div','particle heart', null);
+      p.textContent = '❤';
+      p.classList.add('heart');
+      p.style.fontSize = `${rnd(18,40)}px`;
+    } else {
+      p = el('div','particle spark', null);
+      p.classList.add('spark');
+    }
+
+    // Randomize start X across screen, start above the viewport for falling feeling
+    const startX = Math.random() * vw();
+    const offScreenTop = -60 - Math.random()*80;
+    p.style.left = `${startX}px`;
+    p.style.top = `${offScreenTop}px`;
+    p.style.opacity = '0';
+    p.style.transition = `transform ${3 + Math.random()*2.6}s cubic-bezier(.16,.8,.32,1), opacity .4s linear`;
+    root.appendChild(p);
+    activeParticles.push(p);
+
+    // give initial transform to start slightly rotated and scaled
+    const rotate = rnd(-40,40);
+    const scale = (Math.random()*0.9)+0.6;
+    // end position: somewhere across the screen height (falling)
+    const endY = vh() + 60 + Math.random()*200;
+    // horizontal drift for elegance
+    const driftX = (Math.random()*300 - 150);
+    // small bounce/float path effect using translate3d
+    requestAnimationFrame(()=> {
+      p.style.opacity = '1';
+      p.style.transform = `translate3d(${driftX}px, ${endY - offScreenTop}px, 0) rotate(${rotate}deg) scale(${scale})`;
+    });
+
+    // fade & remove later
+    setTimeout(()=> {
+      p.style.opacity = '0';
+    }, 2500 + Math.random()*900);
+
+    // cleanup after animation ends
+    setTimeout(()=> {
+      if (p && p.parentNode) p.parentNode.removeChild(p);
+    }, 5500);
+  }
+
+  // keep spawning for duration
+  const timer = setInterval(()=> {
+    if (Date.now() - start > duration) {
+      clearInterval(timer);
+      return;
+    }
+    // spawn a few at a time for richness
+    for(let i=0;i< (1 + Math.floor(Math.random()*3)); i++){
+      spawnParticle();
+    }
+  }, spawnInterval);
+}
+
+
+/* ---------- Envelope open & letter reveal ---------- */
+const envelope = document.getElementById('envelope');
+const letter = document.getElementById('letter');
+const kissBtn = document.getElementById('kissBtn');
+const shareBtn = document.getElementById('shareBtn');
+let opened = false;
+
+function openEnvelope(){
+  if (opened) return;
+  opened = true;
+  envelope.classList.add('open');
+  letter.setAttribute('aria-hidden','false');
+
+  // gentle additional glow to envelope when opened
+  envelope.style.boxShadow = '0 20px 60px rgba(255,95,162,0.18)';
+  // trigger 5-second celebration
+  triggerCelebration(5000);
+}
+
+// allow click or keyboard activation
+envelope.addEventListener('click', openEnvelope);
+envelope.addEventListener('keydown', (e)=> {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    openEnvelope();
+  }
+});
+
+// second celebration when clicking the kiss button
+kissBtn.addEventListener('click', ()=>{
+  // small tactile animation on the button
+  kissBtn.animate([
+    { transform: 'scale(1)' },
+    { transform: 'scale(0.96)' },
+    { transform: 'scale(1)' }
+  ], { duration: 250, easing: 'ease-out' });
+  triggerCelebration(5000);
+});
+
+/* ---------- Share button behavior (Web Share API fallback to copy) ---------- */
+shareBtn.addEventListener('click', async ()=>{
+  const title = document.title;
+  const text = 'A love letter for Syeda Eman — open the envelope 💌';
+  const url = location.href;
+  try{
+    if (navigator.share){
+      await navigator.share({ title, text, url });
+    } else {
+      // fallback: copy to clipboard
+      await navigator.clipboard.writeText(url);
+      shareBtn.textContent = 'Link copied ✅';
+      setTimeout(()=> shareBtn.textContent = 'Share ❤️', 1800);
+    }
+  }catch(err){
+    console.warn('Share failed', err);
+    try{
+      await navigator.clipboard.writeText(url);
+      shareBtn.textContent = 'Link copied ✅';
+      setTimeout(()=> shareBtn.textContent = 'Share ❤️', 1800);
+    }catch(e){
+      alert('Unable to share or copy. You can copy the URL manually.');
+    }
+  }
+});
+
+/* ---------- Initialize on DOM content loaded ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  generateBackgroundDecor(20, 28);
+
+  // small accessibility improvement: allow pressing Enter on the envelope on focus
+  envelope.setAttribute('role','button');
+  envelope.setAttribute('aria-pressed','false');
+
+  // optional: pre-open on a second click after a small demo delay (commented out)
+  // setTimeout(()=> envelope.focus(), 800);
+});

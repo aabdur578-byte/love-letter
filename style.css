@@ -1,0 +1,361 @@
+/* style.css
+   Complete styling for the love-letter webpage:
+   - Luxury dark pink aesthetic
+   - Floating envelope, glassmorphism letter card
+   - Responsive layout and animations
+*/
+
+/* ---------- Basic theme & variables ---------- */
+:root{
+  --bg-1: #17000a;
+  --bg-2: #2a001f;
+  --rose-1: #3b0024;
+  --rose-2: #6d003f;
+  --rose-3: #ff5fa2;
+  --gold: #d4af37;
+  --glass: rgba(255,255,255,0.06);
+  --glass-2: rgba(255,255,255,0.04);
+  --text: #fbeaf1;
+  --accent-glow: 0 8px 30px rgba(255,95,162,0.12), 0 0 30px rgba(255,95,162,0.07);
+  --ease: cubic-bezier(.2,.9,.2,1);
+}
+
+/* ---------- Page & background ---------- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color:var(--text);
+  background: linear-gradient(160deg, var(--bg-1) 0%, #220016 35%, #34001f 60%, #2b0017 100%);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  position:relative;
+}
+
+/* Decorative gradient overlay (dark rose) */
+#background{
+  position:fixed;
+  inset:0;
+  background: radial-gradient(800px 400px at 10% 20%, rgba(255,95,162,0.06), transparent 10%),
+              radial-gradient(700px 350px at 90% 80%, rgba(212,175,55,0.03), transparent 10%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* Top actions (share) */
+.top-actions{
+  position:fixed;
+  right:20px;
+  top:18px;
+  z-index:30;
+}
+.top-actions button{
+  background:linear-gradient(90deg,#ff7bb8,#ffd1b3);
+  color:#2a001f;
+  border:none;
+  padding:10px 14px;
+  border-radius:999px;
+  font-weight:600;
+  box-shadow:0 6px 18px rgba(0,0,0,0.45), 0 0 18px rgba(255,95,162,0.06);
+  cursor:pointer;
+  transform:translateZ(0);
+  transition:transform .28s var(--ease), box-shadow .28s var(--ease), opacity .2s;
+}
+.top-actions button:active{transform:translateY(1px) scale(.995)}
+.top-actions button:hover{box-shadow:0 10px 30px rgba(0,0,0,0.5), 0 0 28px rgba(255,95,162,0.12)}
+
+/* ---------- Stage & centering ---------- */
+.stage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  padding:40px 20px;
+  position:relative;
+  z-index:2;
+}
+
+/* Hide visually but keep accessible */
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
+/* ---------- Envelope area ---------- */
+.envelope-area{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  max-width:920px;
+}
+
+/* Envelope wrapper */
+.envelope{
+  width:340px;
+  max-width:86vw;
+  height:220px;
+  position:relative;
+  transform-style:preserve-3d;
+  cursor:pointer;
+  transition:transform .6s var(--ease), box-shadow .6s var(--ease);
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,0.5));
+  z-index:5;
+  will-change:transform;
+}
+
+/* gentle floating bob animation and glow for luxury feel */
+@keyframes float-bob{
+  0%{transform:translateY(0) rotateZ(-1deg)}
+  50%{transform:translateY(-10px) rotateZ(1deg)}
+  100%{transform:translateY(0) rotateZ(-1deg)}
+}
+.envelope{
+  animation: float-bob 6s infinite var(--ease);
+}
+/* subtle glow pulse */
+.envelope::after{
+  content:"";
+  position:absolute;
+  inset:-18px;
+  border-radius:18px;
+  background:linear-gradient(45deg, rgba(255,95,162,0.06), rgba(212,175,55,0.03));
+  filter:blur(14px);
+  opacity:.95;
+  z-index:-1;
+  transition:opacity .4s;
+}
+
+/* Envelope body (paper look) */
+.envelope-body{
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  background: linear-gradient(180deg, #fdf6fb 0%, #ffeef9 100%);
+  background-clip:padding-box;
+  box-shadow: 0 8px 40px rgba(106,4,41,0.25), inset 0 2px 8px rgba(255,255,255,0.6);
+  border:1px solid rgba(255,255,255,0.7);
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  transform-origin:top center;
+}
+
+/* Envelope label text (gold & pink accents) */
+.label{
+  text-align:center;
+  color:#3b0024;
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:0.2px;
+}
+.label .from{font-size:13px; opacity:0.9}
+.label .to{font-size:15px; margin-top:6px}
+.label .to-sub{display:block; font-size:11px; opacity:.7; font-weight:400}
+
+/* Wax seal styling */
+.seal{
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #ffd9b3, #d4af37 10%, #bb8a1c 20%, #8b4c05 80%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25), inset 0 -6px 12px rgba(0,0,0,0.25);
+  border:2px solid rgba(255,255,255,0.15);
+  transform-origin:center;
+  transition:transform .5s var(--ease);
+}
+.seal-heart{
+  font-family: 'Great Vibes', cursive;
+  font-size:20px;
+  color:#fff0f4;
+  text-shadow:0 6px 18px rgba(0,0,0,0.35);
+}
+
+/* Flap (triangle) sits on top and will rotate to open */
+.flap{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:52%;
+  background: linear-gradient(180deg, #ffedf5 0%, #ffdfee 100%);
+  border-top-left-radius:12px;
+  border-top-right-radius:12px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin:top center;
+  transform:translateZ(0) rotateX(0deg);
+  transition: transform .8s var(--ease), box-shadow .6s var(--ease);
+  box-shadow: 0 10px 40px rgba(106,4,41,0.18);
+  z-index:6;
+}
+
+/* When envelope is opened, rotate the flap up and reveal letter */
+.envelope.open .flap{
+  transform: translateZ(0) rotateX(-180deg);
+  box-shadow:none;
+}
+/* Add a small seal lift when opening */
+.envelope.open .seal{ transform: translateY(-18px) rotate(-6deg) }
+
+/* ---------- Letter (glassmorphism card) ---------- */
+.letter{
+  position:absolute;
+  left:50%;
+  top:35%;
+  width:86%;
+  max-width:560px;
+  transform:translate(-50%, 10%);
+  border-radius:18px;
+  padding:26px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px) saturate(120%);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.02);
+  color:var(--text);
+  opacity:0;
+  pointer-events:none;
+  transform-origin:top center;
+  transition: transform .9s var(--ease), opacity .6s var(--ease);
+  z-index:4;
+  will-change:transform, opacity;
+}
+
+/* When envelope open, slide the letter fully out */
+.envelope.open .letter{
+  opacity:1;
+  pointer-events:auto;
+  transform:translate(-50%, -12%);
+}
+
+/* Letter typography */
+.letter-header .letter-from,
+.letter-header .letter-to{
+  font-family: 'Great Vibes', cursive;
+  margin:0;
+  color:#ffd9eb;
+  text-shadow:0 6px 18px rgba(255,95,162,0.12);
+}
+.letter-header .letter-to{
+  font-size:28px;
+  font-weight:700;
+}
+.letter-header .letter-from{font-size:22px}
+
+/* Body text: elegant spacing */
+.letter-body{
+  margin-top:14px;
+  line-height:1.52;
+  color:#ffeef6;
+  font-size:15px;
+}
+.letter-body p{margin:12px 0}
+
+/* Footer button: big glowing call-to-action */
+.letter-footer{
+  display:flex;
+  justify-content:center;
+  margin-top:18px;
+}
+.kiss-btn{
+  padding:14px 18px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(90deg, #ff7bb8 0%, #ff5fa2 50%, #ffd1b3 100%);
+  color:#2a001f;
+  font-weight:700;
+  font-size:16px;
+  box-shadow: 0 12px 38px rgba(255,95,162,0.18), 0 0 30px rgba(212,175,55,0.06);
+  cursor:pointer;
+  transition:transform .2s, box-shadow .28s;
+}
+.kiss-btn:active{transform:translateY(1px)}
+.kiss-btn:hover{box-shadow: 0 18px 50px rgba(255,95,162,0.25), 0 0 50px rgba(212,175,55,0.08)}
+
+/* ---------- Floating background hearts & sparkles (CSS variations) ---------- */
+.bg-heart, .bg-spark{
+  position:fixed;
+  pointer-events:none;
+  z-index:1;
+  mix-blend-mode:screen;
+}
+
+/* small sparkle styles used for transient effects */
+.sparkle{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background: linear-gradient(90deg,#ffffff,#ffd8ea);
+  box-shadow:0 0 12px rgba(255,255,255,0.9);
+  opacity:0.9;
+}
+
+/* ---------- Celebration particle styles ---------- */
+.particle{
+  position:fixed;
+  pointer-events:none;
+  z-index:60;
+  transform-origin:center;
+  will-change:transform, opacity;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+/* kisses (use emoji background) */
+.particle.kiss{
+  font-size:32px;
+  transform:translate3d(0,0,0);
+  filter:drop-shadow(0 6px 16px rgba(255,95,162,0.25));
+}
+
+/* hearts */
+.particle.heart{
+  font-size:28px;
+  filter:drop-shadow(0 8px 22px rgba(212,175,55,0.12));
+}
+
+/* spark particle for the celebration */
+.particle.spark{
+  width:8px;
+  height:8px;
+  background: radial-gradient(circle at 30% 30%, #fff7ff, #ff9ecb 60%);
+  border-radius:50%;
+  box-shadow:0 0 16px rgba(255,173,196,0.9);
+}
+
+/* ---------- Responsive & niceties ---------- */
+.hint{
+  margin-top:16px;
+  color:rgba(255,255,255,0.6);
+  font-size:14px;
+  opacity:.95;
+}
+
+/* smaller screens adjustments */
+@media (max-width:420px){
+  .envelope{height:200px}
+  .letter-header .letter-to{font-size:22px}
+  .label .to-sub{display:none}
+  .kiss-btn{width:100%}
+}
+
+/* Accessibility focus outline */
+.envelope:focus{outline:3px solid rgba(255,95,162,0.22); border-radius:12px}
+.kiss-btn:focus{outline:3px solid rgba(212,175,55,0.18); outline-offset:3px}

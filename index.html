@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>For Syeda Eman — A Love Letter</title>
+
+  <!-- Google Fonts: Great Vibes for headings and Poppins for body -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Theme & sharing meta (helps when sharing the page) -->
+  <meta name="description" content="A romantic animated love letter from Abd to Syeda Eman.">
+  <meta property="og:title" content="For Syeda Eman — A Love Letter">
+  <meta property="og:description" content="Open the envelope to read a heartfelt note.">
+  <meta name="theme-color" content="#2a001f">
+
+  <!-- Link to styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Floating decorative background (hearts & sparkles generated here and by JS) -->
+  <div id="background"></div>
+
+  <!-- Top-right control area: share button -->
+  <div class="top-actions">
+    <button id="shareBtn" aria-label="Share this love letter">Share ❤️</button>
+  </div>
+
+  <!-- Main landing area -->
+  <main class="stage" role="main" aria-labelledby="title">
+    <h1 id="title" class="sr-only">A Love Letter for Syeda Eman</h1>
+
+    <!-- Center container for envelope and letter -->
+    <div class="envelope-area">
+      <!-- Envelope (click to open) -->
+      <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Open the envelope">
+        <div class="envelope-body">
+          <!-- Front label -->
+          <div class="label">
+            <div class="from">From: <strong>Abd</strong></div>
+            <div class="to">To: <strong>Syeda Eman</strong><span class="to-sub"> (the prettiest girl in the world)</span></div>
+          </div>
+          <!-- Wax seal -->
+          <div class="seal">
+            <div class="seal-heart">❤</div>
+          </div>
+        </div>
+
+        <!-- Envelope flap (folds open) -->
+        <div class="flap"></div>
+
+        <!-- Letter hidden inside initially -->
+        <article class="letter" id="letter" aria-hidden="true">
+          <header class="letter-header">
+            <h2 class="letter-from">From: <span>Abd</span></h2>
+            <h3 class="letter-to">To: <span>Syeda Eman (the prettiest girl in the world)</span></h3>
+          </header>
+
+          <section class="letter-body">
+            <p>Hey my girl,</p>
+
+            <p>I looooooooveeee youuuuuu sooooooo muchhhh my beautiful baby.</p>
+
+            <p>I wanted to make something special because words in a normal message never feel enough. You mean so much to me, and I hope you always remember how loved and appreciated you are.</p>
+
+            <p>Every single day I pray for your happiness, your health, your success, and your peace. No matter what happens, I will always be here for you. I want to be the person who makes you smile after a difficult day, celebrates your happiest moments, and reminds you how amazing you truly are whenever you forget.</p>
+
+            <p>Your smile has a way of making everything feel brighter, and your kindness makes my heart feel at home. You are beautiful in every way, not just because of how you look, but because of who you are. I feel incredibly lucky that you're part of my life.</p>
+
+            <p>I know life is not always easy, but I hope you never feel like you have to face anything alone. Whenever you need someone to listen, to support you, or simply to remind you that everything will be okay, I'll be here.</p>
+
+            <p>Thank you for being you. Thank you for making my days happier just by existing. I promise to keep cheering for you, praying for you, and loving you with all my heart.</p>
+
+            <p>I hope this little letter makes you smile as much as you make me smile.</p>
+
+            <p>I love you endlessly, my beautiful baby.</p>
+
+            <p>Forever yours,</p>
+
+            <p><strong>Abd ❤️</strong></p>
+          </section>
+
+          <!-- Glowing call-to-action button for another celebration -->
+          <footer class="letter-footer">
+            <button id="kissBtn" class="kiss-btn">Click here for your kiss 💋</button>
+          </footer>
+        </article>
+      </div>
+    </div>
+
+    <!-- Small instruction -->
+    <p class="hint">Click the envelope to open your letter</p>
+  </main>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
